@@ -1,0 +1,31 @@
+version: '3.6'
+services:
+  hellogradle:
+    image: hello-spring:latest
+    build: .
+    ports:
+      - "8084:8080"
+  postgres:
+    build: .
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${USER_PASSWORD}
+    ports:
+      - '5432:5432'
+
+  nginx-proxy:
+    build: .
+    ports:
+      - "8083:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  whoami:
+    build: .
+    environment:
+      - VIRTUAL_HOST=whoami.local
+volumes:
+  pgdata:
